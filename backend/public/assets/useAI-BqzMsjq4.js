@@ -1,0 +1,1 @@
+import{a as e}from"./rolldown-runtime-CNC7AqOf.js";import{o as t}from"./vendor-framer-DudmOgYh.js";import{n}from"./index-DDyKEZLi.js";var r=e(t(),1),i=()=>{let e=(0,r.useContext)(n);if(!e)throw Error(`useAI must be used within AIContextProvider`);return e};export{i as t};
