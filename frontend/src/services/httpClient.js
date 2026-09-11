@@ -1,9 +1,34 @@
 import axios from "axios";
 
+/**
+ * Resolves the base URL for API requests.
+ * Supports:
+ * - Host URL: "http://localhost:3000" -> "http://localhost:3000/api"
+ * - Full URL with /api: "http://localhost:3000/api" -> "http://localhost:3000/api"
+ * - Remote backend URL: "http://backend.example.com" -> "http://backend.example.com/api"
+ * - Relative / empty (same-origin container / reverse proxy): "" -> "/api"
+ */
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl || !envUrl.trim()) {
+    return "/api";
+  }
+  const cleanUrl = envUrl.trim().replace(/\/+$/, "");
+  return cleanUrl.endsWith("/api") ? cleanUrl : `${cleanUrl}/api`;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL?.replace(/\/$/, "") || "/api",
+  baseURL: getBaseUrl(),
   timeout: 120000,
   withCredentials: true,
+});
+
+// Guard against duplicate /api/ if a caller supplies a path starting with /api/
+api.interceptors.request.use((config) => {
+  if (config.url && config.url.startsWith("/api/")) {
+    config.url = config.url.replace(/^\/api/, "");
+  }
+  return config;
 });
 
 let isRefreshing = false;

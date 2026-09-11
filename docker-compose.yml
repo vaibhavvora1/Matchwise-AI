@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://MatchwiseAI-1052301444.ap-south-1.elb.amazonaws.com}
     container_name: matchwise-app
     restart: unless-stopped
     ports:

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../../services/httpClient";
 
 const JobMatch = () => {
   const [resumeText, setResumeText] = useState("");
@@ -18,7 +18,7 @@ const JobMatch = () => {
 
     try {
       setError("");
-      const { data } = await axios.post("/api/resume/extract-text", formData, {
+      const { data } = await api.post("/resume/extract-text", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setResumeText(data.text || "");
@@ -40,7 +40,7 @@ const JobMatch = () => {
     setCriteria(null);
 
     try {
-      const { data } = await axios.post("/api/jobs/match", { resumeText });
+      const { data } = await api.post("/jobs/match", { resumeText });
       setCriteria(data.criteria);
       setJobs(data.jobs);
     } catch (err) {
