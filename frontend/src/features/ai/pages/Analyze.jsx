@@ -9,6 +9,8 @@ import Navbar from '../../../components/layout/Navbar'
 import Footer from '../../../components/layout/Footer'
 import PageTransition from '../../../components/ui/PageTransition'
 import LoadingSpinner from '../../../components/ui/LoadingSpinner'
+import SEO from '../../../components/ui/SEO'
+import { getErrorMessage } from '../../../services/apiError'
 
 /* ─── Converts a generated resume object into plain text ───
    Needed to send the generated resume into the Analyze API as a text
@@ -193,15 +195,14 @@ const Analyze = () => {
           setJobsWarning(warning || '')
         })
         .catch((e) => {
-          console.warn('Background job search failed:', e?.response?.data?.message || e)
           setJobMatches([])
-          setJobsWarning(e?.response?.data?.message || 'Job search is temporarily unavailable.')
+          setJobsWarning(getErrorMessage(e, 'Job search is temporarily unavailable.'))
         })
         .finally(() => {
           setIsLoadingJobs(false)
         })
     } catch (e) {
-      setError(e?.response?.data?.message || 'Failed to generate resume. Please try again.')
+      setError(getErrorMessage(e, 'Failed to generate resume. Please try again.'))
     } finally {
       setIsLoadingResume(false)
     }
@@ -219,7 +220,7 @@ const Analyze = () => {
       setInterviewReportData(data)
       navigate('/interview-report')
     } catch (e) {
-      setError(e?.response?.data?.message || 'Failed to generate report. Please try again.')
+      setError(getErrorMessage(e, 'Failed to generate report. Please try again.'))
     } finally {
       setIsLoadingReport(false)
     }
@@ -229,6 +230,11 @@ const Analyze = () => {
 
   return (
     <PageTransition>
+      <SEO
+        title="MatchWise AI — Resume & Job Analysis"
+        description="Analyze your resume against job postings to generate ATS scores, bullet optimizations, and role-specific interview coaching."
+        noindex={true}
+      />
       <Navbar />
 
       <div style={{ paddingTop: '72px', minHeight: '100vh' }}>

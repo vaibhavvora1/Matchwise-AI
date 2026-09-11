@@ -5,6 +5,7 @@ import { PDFParse } from "pdf-parse";
 import { getResumeMatchedJobs } from "../services/resumeJobMatchService.js";
 import authMiddleware from "../middleware/auth.middleware.js";
 import { jobMatchRateLimiter } from "../middleware/jobRateLimiter.js";
+import logActivity from "../services/activity.service.js";
 
 const router = express.Router();
 const upload = multer({
@@ -48,6 +49,21 @@ router.post(
       }
 
       const result = await getResumeMatchedJobs(resumeText);
+
+      if (req.user?.id) {
+        logActivity({
+          userId: req.user.id,
+          eventType: "MATCH_SEARCHED",
+          description: `Searched for job matches using resume (${result.jobs?.length || 0} jobs found)`,
+          metadata: {
+            jobsFound: result.jobs?.length || 0,
+            matchLevel: result.matchLevel,
+            roleCriteria: result.criteria?.roleCategory || "",
+          },
+          req,
+        });
+      }
+
       return res.status(200).json({
         ...result,
         warning: deriveWarning(result.matchLevel),
@@ -72,6 +88,21 @@ router.post(
 
     try {
       const result = await getResumeMatchedJobs(resumeText);
+
+      if (req.user?.id) {
+        logActivity({
+          userId: req.user.id,
+          eventType: "MATCH_SEARCHED",
+          description: `Searched for job matches using profile text (${result.jobs?.length || 0} jobs found)`,
+          metadata: {
+            jobsFound: result.jobs?.length || 0,
+            matchLevel: result.matchLevel,
+            roleCriteria: result.criteria?.roleCategory || "",
+          },
+          req,
+        });
+      }
+
       return res.status(200).json({
         ...result,
         warning: deriveWarning(result.matchLevel),

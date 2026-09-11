@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import SEO from "../ui/SEO";
+import FeedbackButton from "../../features/feedback/components/FeedbackButton";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -59,6 +60,12 @@ const values = [
 export default function AboutUs() {
   return (
     <main style={{ background: "#FBFAF7", color: "#151812" }}>
+      <SEO
+        title="MatchWise AI — About Us"
+        description="Learn about MatchWise AI — built to eliminate job search anxiety through transparent AI resume scoring, bullet optimization, and mock interview coaching."
+        canonical="https://matchwiseai.com/about"
+        noindex={false}
+      />
       {/* Hero */}
       <section
         style={{
@@ -327,24 +334,25 @@ export default function AboutUs() {
               queue in between.
             </p>
           </div>
-          <Link
-            to="/contact"
+          <FeedbackButton
+            ariaLabel="Send feedback about MatchWise AI"
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: "8px",
               padding: "12px 22px",
+              minHeight: "44px",
               borderRadius: "999px",
               background: "#0F6E56",
               color: "#FFFFFF",
               fontSize: "15px",
               fontWeight: 600,
-              textDecoration: "none",
               whiteSpace: "nowrap",
+              boxShadow: "none",
             }}
           >
             Send feedback
-          </Link>
+          </FeedbackButton>
         </motion.div>
       </section>
     </main>

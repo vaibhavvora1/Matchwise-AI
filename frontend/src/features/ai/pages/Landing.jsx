@@ -6,6 +6,7 @@ import Navbar from '../../../components/layout/Navbar'
 import Footer from '../../../components/layout/Footer'
 import PageTransition from '../../../components/ui/PageTransition'
 import TextPressure from '../../../components/ui/TextPressure'
+import SEO from '../../../components/ui/SEO'
 
 /* ─── Product Walkthrough Capabilities ─── */
 const PRODUCT_FEATURES = [
@@ -166,6 +167,12 @@ const Landing = () => {
 
   return (
     <PageTransition>
+      <SEO
+        title="MatchWise AI — AI Resume Builder, ATS Checker & Mock Interview Coach"
+        description="MatchWise AI is your AI resume builder and ATS resume checker. Optimize your resume, practice role-specific mock interviews, and get hired faster."
+        canonical="https://matchwiseai.com/"
+        noindex={false}
+      />
       <Navbar />
 
       {/* ─── Hero Section ─── */}
@@ -788,6 +795,90 @@ const Landing = () => {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12h14M12 5l7 7-7 7" stroke="#08090d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
+              </motion.button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FAQ Preview Section ─── */}
+      <section
+        id="faq-preview"
+        style={{
+          paddingTop: '90px',
+          paddingBottom: '90px',
+          background: '#ffffff',
+          borderTop: '1px solid rgba(245, 158, 11, 0.15)',
+        }}
+      >
+        <div className="container" style={{ maxWidth: '840px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <p style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#d97706', marginBottom: '12px' }}>
+              Got Questions?
+            </p>
+            <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: 700, color: '#18181b', lineHeight: 1.15 }}>
+              Frequently Asked Questions
+            </h2>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '36px' }}>
+            {[
+              {
+                q: 'What is MatchWise AI?',
+                a: 'MatchWise AI is an intelligent career platform designed to help job seekers analyze resumes, beat ATS filters, discover matching jobs, and prepare for interviews.',
+              },
+              {
+                q: 'What formats can I upload?',
+                a: 'MatchWise AI supports PDF (.pdf) documents up to 10MB as well as direct plain text paste inputs.',
+              },
+              {
+                q: 'How is the match score calculated?',
+                a: 'Match scores compare extracted technical skills, experience requirements, and role keywords between your resume and job postings.',
+              },
+              {
+                q: 'Is my resume data secure?',
+                a: 'Yes. Files are processed securely in memory during parsing, and access is protected via encrypted channels and token authentication.',
+              },
+            ].map((faq, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: '#fdfbf7',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(245, 158, 11, 0.2)',
+                  padding: '20px 24px',
+                }}
+              >
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#18181b', marginBottom: '8px' }}>
+                  {faq.q}
+                </h3>
+                <p style={{ color: '#475569', fontSize: '0.925rem', lineHeight: 1.65, margin: 0 }}>
+                  {faq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <Link to="/faq" style={{ textDecoration: 'none' }}>
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  color: '#d97706',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  padding: '12px 28px',
+                  borderRadius: '999px',
+                  fontWeight: 700,
+                  fontSize: '0.925rem',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                View All Frequently Asked Questions →
               </motion.button>
             </Link>
           </div>

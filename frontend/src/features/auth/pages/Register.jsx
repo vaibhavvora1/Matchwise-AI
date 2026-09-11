@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 import InputField from '../components/InputField'
 import LoadingSpinner from '../../../components/ui/LoadingSpinner'
 import { useAuth } from '../hooks/userAuth'
+import SEO from '../../../components/ui/SEO'
+import { getErrorMessage } from '../../../services/apiError'
 
 const RegisterPage = () => {
   const navigate = useNavigate()
@@ -33,7 +35,7 @@ const RegisterPage = () => {
       })
       navigate('/analyze')
     } catch (error) {
-      setServerError(error?.response?.data?.message || 'Unable to create your account. Please try again.')
+      setServerError(getErrorMessage(error, 'Unable to create your account. Please try again.'))
     } finally {
       setLoading(false)
     }
@@ -41,6 +43,12 @@ const RegisterPage = () => {
 
   return (
     <>
+      <SEO
+        title="MatchWise AI — Create Account"
+        description="Create a free MatchWise AI account to start optimizing your resume and preparing for target job interviews."
+        canonical="https://matchwiseai.com/register"
+        noindex={false}
+      />
       {/* Header */}
       <div style={{ marginBottom: '32px' }}>
         <p className="section-label" style={{ marginBottom: '12px' }}>Get started</p>

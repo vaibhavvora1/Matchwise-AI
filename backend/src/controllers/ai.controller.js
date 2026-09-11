@@ -5,6 +5,7 @@ import {
   generateATSResume,
 } from "../services/ai.service.js";
 import { saveAnalysisHistory } from "../services/history.service.js";
+import logActivity from "../services/activity.service.js";
 
 // ─── Shared PDF parsing helper ─────────────────────────────────────────────
 // Handles both memory-based (multer memoryStorage) and disk-based uploads.
@@ -85,6 +86,18 @@ export async function generateInterviewReportController(req, res) {
       reportData: report,
     });
 
+    logActivity({
+      userId: req.user.id,
+      eventType: "INTERVIEW_REPORT_GENERATED",
+      description: `Generated interview preparation report${req.body.jobTitle ? ` for "${req.body.jobTitle}"` : ""}`,
+      metadata: {
+        jobTitle: req.body.jobTitle || "Untitled Role",
+        company: req.body.company || "",
+        matchScore: report?.matchScore || 0,
+      },
+      req,
+    });
+
     res.status(200).json({ success: true, report });
   } catch (error) {
     console.error(
@@ -138,6 +151,18 @@ export async function generateATSResumeController(req, res) {
         ? optimizedResume.resume.skills.technical
         : [],
       reportData: optimizedResume,
+    });
+
+    logActivity({
+      userId: req.user.id,
+      eventType: "RESUME_ANALYZED",
+      description: `Generated ATS optimized resume${req.body.jobTitle ? ` for "${req.body.jobTitle}"` : ""}`,
+      metadata: {
+        jobTitle: req.body.jobTitle || "Untitled Role",
+        company: req.body.company || "",
+        score: optimizedResume?.atsReport?.score || 0,
+      },
+      req,
     });
 
     res.status(200).json({ success: true, optimizedResume });

@@ -65,13 +65,3 @@ export async function getUserProfile() {
     throw err
   }
 }
-
-export async function getUserAggregation() {
-  try {
-    const response = await api.get('/user/aggregation')
-    return response.data
-  } catch (err) {
-    console.error('[auth.api]', err)
-    throw err
-  }
-}

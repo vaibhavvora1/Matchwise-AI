@@ -6,6 +6,7 @@ import Footer from '../../../components/layout/Footer';
 import PageTransition from '../../../components/ui/PageTransition';
 import { ResumeResultSkeleton } from '../../../components/ui/SkeletonLoader';
 import { matchJobsFromText } from '../../../services/ai.api';
+import SEO from '../../../components/ui/SEO';
 
 import ResumeHeader from '../components/ResumeHeader';
 import ResumeContent from '../components/ResumeContent';
@@ -122,6 +123,11 @@ const ResumeResult = () => {
 
   return (
     <PageTransition>
+      <SEO
+        title="MatchWise AI — Optimized Resume Result"
+        description="Your AI-optimized resume is ready with custom bullet enhancements, ATS score breakdown, and job recommendations."
+        noindex={true}
+      />
       <Navbar />
 
       <div style={{ paddingTop: '72px', minHeight: '100vh' }}>

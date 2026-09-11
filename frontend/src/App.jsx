@@ -5,20 +5,23 @@ import { AuthContextProvider } from './features/auth/auth.context.jsx'
 import { AIContextProvider } from './context/AIContext.jsx'
 import SmoothScrollProvider from './components/layout/SmoothScrollProvider.jsx'
 import { ToastProvider } from './components/ui/Toast.jsx'
+import ErrorBoundary from './components/ui/ErrorBoundary.jsx'
 
 const App = () => {
   return (
-    <AuthContextProvider>
-      <AIContextProvider>
-        <ToastProvider>
-          <SmoothScrollProvider>
-            <MotionConfig reducedMotion="user">
-              <RouterProvider router={Router} />
-            </MotionConfig>
-          </SmoothScrollProvider>
-        </ToastProvider>
-      </AIContextProvider>
-    </AuthContextProvider>
+    <ErrorBoundary>
+      <AuthContextProvider>
+        <AIContextProvider>
+          <ToastProvider>
+            <SmoothScrollProvider>
+              <MotionConfig reducedMotion="user">
+                <RouterProvider router={Router} />
+              </MotionConfig>
+            </SmoothScrollProvider>
+          </ToastProvider>
+        </AIContextProvider>
+      </AuthContextProvider>
+    </ErrorBoundary>
   )
 }
 

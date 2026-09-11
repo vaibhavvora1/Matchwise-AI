@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
-  getUserAggregationController,
   getUserProfilecontroller,
+  recordUserActivityController,
 } from "../controllers/user.controller.js";
 import {
   getUserHistoryController,
@@ -15,8 +15,8 @@ const userRouter = Router();
 /** @route GET /api/user/profile — Get authenticated user profile */
 userRouter.get("/profile", authMiddleware, getUserProfilecontroller);
 
-/** @route GET /api/user/aggregation — Get aggregate user stats */
-userRouter.get("/aggregation", authMiddleware, getUserAggregationController);
+/** @route POST /api/user/activity — Record user activity from client */
+userRouter.post("/activity", authMiddleware, recordUserActivityController);
 
 /** @route GET /api/user/history — Get paginated analysis history */
 userRouter.get("/history", authMiddleware, getUserHistoryController);

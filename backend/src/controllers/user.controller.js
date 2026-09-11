@@ -1,4 +1,6 @@
 import usermodel from "../models/user.model.js";
+import logActivity from "../services/activity.service.js";
+import { ACTIVITY_EVENT_TYPES } from "../models/activity.model.js";
 
 /**
  * @name getUserProfilecontroller
@@ -48,19 +50,55 @@ export async function getUserProfilecontroller(req, res) {
   }
 }
 
-export async function getUserAggregationController(req, res) {
+/**
+ * @name recordUserActivityController
+ * @description Endpoint for authenticated client-side activity recording (e.g. PAGE_VIEWED, MATCH_VIEWED).
+ * @route POST /api/user/activity
+ * @access Private
+ */
+export async function recordUserActivityController(req, res) {
   try {
-    const aggregation = await usermodel.getUserStats();
+    const userId = req.user.id;
+    const { eventType, description, metadata } = req.body || {};
 
-    res.status(200).json({
+    if (!eventType || !description) {
+      return res.status(400).json({
+        success: false,
+        message: "eventType and description are required.",
+      });
+    }
+
+    if (!ACTIVITY_EVENT_TYPES.includes(eventType)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid activity eventType.",
+      });
+    }
+
+    const activity = await logActivity({
+      userId,
+      eventType,
+      description: String(description).slice(0, 500),
+      metadata: metadata || {},
+      req,
+    });
+
+    return res.status(201).json({
       success: true,
-      aggregation,
+      activity: activity
+        ? {
+            id: activity._id,
+            eventType: activity.eventType,
+            createdAt: activity.createdAt,
+          }
+        : null,
     });
   } catch (error) {
-    console.error("[User Controller] Aggregation error:", error.message);
-    res.status(500).json({
+    console.error("[User Controller] Record activity error:", error.message);
+    return res.status(500).json({
       success: false,
-      message: "Internal server error fetching aggregation data",
+      message: "Failed to record user activity.",
     });
   }
 }
+

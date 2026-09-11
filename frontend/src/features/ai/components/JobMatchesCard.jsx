@@ -2,125 +2,111 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import LoadingSpinner from '../../../components/ui/LoadingSpinner'
-
-const formatPostedDate = (dateStr) => {
-    if (!dateStr) return ''
-    const date = new Date(dateStr)
-    if (Number.isNaN(date.getTime())) return ''
-    const days = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24))
-    if (days <= 0) return 'Today'
-    if (days === 1) return '1 day ago'
-    return `${days} days ago`
-}
-
-const getMatchColor = (score) => {
-    if (score >= 71) return { color: '#22C55E', bg: '#F0FDF4', border: '#22C55E40' }
-    if (score >= 41) return { color: '#F59E0B', bg: '#FFFBEB', border: '#F59E0B40' }
-    return { color: '#EF4444', bg: '#FEF2F2', border: '#EF444440' }
-}
-
-const MatchBadge = ({ score }) => {
-    if (typeof score !== 'number') return null
-    const c = getMatchColor(score)
-    return (
-        <span
-            style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                fontSize: '0.6875rem',
-                fontWeight: 700,
-                padding: '2px 8px',
-                borderRadius: '999px',
-                background: c.bg,
-                color: c.color,
-                border: `1px solid ${c.border}`,
-                flexShrink: 0,
-            }}
-        >
-            {score}% match
-        </span>
-    )
-}
+import JobMatchCard from './JobMatchCard'
 
 const JobMatchesCard = React.memo(({ jobs, isLoadingJobs, jobsWarning }) => {
-    return (
-        <motion.div
-            className="card"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+  return (
+    <motion.div
+      className="card"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <h3
+          style={{
+            fontWeight: 700,
+            fontSize: '1rem',
+            color: 'var(--color-text-primary, #18181b)',
+            margin: 0,
+          }}
         >
-            <h3 style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--color-text-primary)', marginBottom: '14px' }}>
-                Matching Jobs
-            </h3>
+          Matching Job Openings
+        </h3>
+        {jobs && jobs.length > 0 && (
+          <span
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              color: '#d97706',
+              background: 'rgba(245, 158, 11, 0.12)',
+              padding: '2px 8px',
+              borderRadius: '999px',
+            }}
+          >
+            {jobs.length} Found
+          </span>
+        )}
+      </div>
 
-            {isLoadingJobs ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-                    <LoadingSpinner size={16} />
-                    Finding jobs that match your resume...
-                </div>
-            ) : jobs && jobs.length > 0 ? (
-                <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                        {jobs.slice(0, 5).map((job, i) => (
-                            <motion.div
-                                key={job.jobId || i}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.06 }}
-                                style={{
-                                    paddingBottom: '14px',
-                                    borderBottom: i < Math.min(jobs.length, 5) - 1 ? '1px solid var(--color-border)' : 'none',
-                                }}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '2px' }}>
-                                    <p style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--color-text-primary)' }}>
-                                        {job.title}
-                                    </p>
-                                    <MatchBadge score={job.matchScore} />
-                                </div>
-                                <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', marginBottom: '4px' }}>
-                                    {job.company}{job.location ? ` · ${job.location}` : ''}
-                                </p>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                                        {formatPostedDate(job.postedDate)}
-                                    </span>
-                                    <a
-                                        href={job.applyLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn-outline btn-sm"
-                                        style={{ fontSize: '0.75rem', padding: '4px 12px' }}
-                                    >
-                                        Apply Now
-                                    </a>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
+      {isLoadingJobs ? (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            fontSize: '0.875rem',
+            color: 'var(--color-text-secondary, #475569)',
+            padding: '24px 16px',
+            backgroundColor: 'var(--color-bg, #fdfbf7)',
+            borderRadius: '16px',
+            border: '1px dashed var(--color-border, rgba(245, 158, 11, 0.3))',
+          }}
+        >
+          <LoadingSpinner size={20} />
+          <span>Analyzing role specifications & finding real-time job matches...</span>
+        </div>
+      ) : jobs && jobs.length > 0 ? (
+        <>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {jobs.slice(0, 4).map((job, i) => (
+              <JobMatchCard key={job.jobId || i} job={job} compact={true} />
+            ))}
+          </div>
 
-                    <Link
-                        to="/match-jobs"
-                        className="btn btn-outline btn-sm"
-                        id="view-matching-jobs-btn"
-                        style={{
-                            display: 'block',
-                            textAlign: 'center',
-                            marginTop: '16px',
-                            width: '100%',
-                        }}
-                    >
-                        View Matching Jobs
-                    </Link>
-                </>
-            ) : (
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-                    {jobsWarning || 'No matching jobs found right now — check back later.'}
-                </p>
-            )}
-        </motion.div>
-    )
+          <Link
+            to="/match-jobs"
+            className="btn btn-outline btn-sm"
+            id="view-matching-jobs-btn"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              textAlign: 'center',
+              marginTop: '4px',
+              width: '100%',
+              borderRadius: '999px',
+              fontWeight: 600,
+            }}
+          >
+            View All Matching Jobs ({jobs.length}) →
+          </Link>
+        </>
+      ) : (
+        <div
+          style={{
+            padding: '20px 16px',
+            borderRadius: '16px',
+            backgroundColor: 'var(--color-bg, #fdfbf7)',
+            border: '1px solid var(--color-border, rgba(245, 158, 11, 0.2))',
+            fontSize: '0.875rem',
+            color: 'var(--color-text-muted, #64748b)',
+            textAlign: 'center',
+          }}
+        >
+          <p style={{ margin: 0 }}>
+            {jobsWarning || 'No matching jobs found right now — check back later or update your resume parameters.'}
+          </p>
+        </div>
+      )}
+    </motion.div>
+  )
 })
 
 JobMatchesCard.displayName = 'JobMatchesCard'

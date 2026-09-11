@@ -7,7 +7,8 @@ const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Analyze', href: '/analyze' },
   { label: 'Features', href: '/#features' },
-  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Support', href: '/contact' },
 ]
 
 const Navbar = () => {

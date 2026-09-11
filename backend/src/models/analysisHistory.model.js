@@ -22,7 +22,7 @@ const analysisHistorySchema = new mongoose.Schema(
     jobTitle: {
       type: String,
       trim: true,
-      default: "Untitled Role",
+      default: "",
     },
     company: {
       type: String,

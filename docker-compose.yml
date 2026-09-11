@@ -1,0 +1,29 @@
+services:
+  # ─── Public Application (MatchWise AI) ────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: matchwise-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - MONGO_URI=${MONGODB_URI:-${MONGO_URI}}
+      - CLIENT_URL=http://MatchwiseAI-1052301444.ap-south-1.elb.amazonaws.com
+      - COOKIE_SECURE=false
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - ACCESS_TOKEN_EXPIRY=${ACCESS_TOKEN_EXPIRY:-15m}
+      - REFRESH_TOKEN_EXPIRY=${REFRESH_TOKEN_EXPIRY:-7d}
+      - BCRYPT_SALT_ROUNDS=${BCRYPT_SALT_ROUNDS:-12}
+      - GOOGLE_GENAI_API_KEY=${GOOGLE_GENAI_API_KEY}
+      - RAPID_API_KEY=${RAPID_API_KEY}
+    networks:
+      - matchwise-network
+
+networks:
+  matchwise-network:
+    driver: bridge

@@ -6,7 +6,6 @@ import {
   logout,
   logoutAllDevices,
   getUserProfile,
-  getUserAggregation,
   setAuthHeader,
   setCsrfHeader,
 } from "../services/auth.api.jsx";
@@ -100,17 +99,6 @@ export const useAuth = () => {
     }
   };
 
-  const handleGetUserAggregation = async () => {
-    setLoading(true);
-    try {
-      const data = await getUserAggregation();
-      if (data?.user) setUser(data.user);
-      return data;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return {
     user,
     loading,
@@ -121,6 +109,5 @@ export const useAuth = () => {
     handleLogout,
     handleLogoutAllDevices,
     handleGetUserProfile,
-    handleGetUserAggregation,
   };
 };

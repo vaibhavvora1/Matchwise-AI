@@ -8,6 +8,7 @@ import Navbar from '../../../components/layout/Navbar'
 import Footer from '../../../components/layout/Footer'
 import PageTransition from '../../../components/ui/PageTransition'
 import { InterviewReportSkeleton } from '../../../components/ui/SkeletonLoader'
+import SEO from '../../../components/ui/SEO'
 import TabBar from '../components/TabBar'
 import AccordionItem from '../components/AccordionItem'
 import SkillGapCard from '../components/SkillGapCard'
@@ -229,6 +230,11 @@ const InterviewReport = () => {
 
   return (
     <PageTransition>
+      <SEO
+        title="MatchWise AI — AI Interview Report & Prep"
+        description="Detailed interview preparation report featuring predicted role-specific questions, STAR framework model answers, and a 7-day action roadmap."
+        noindex={true}
+      />
       <Navbar />
 
       <div style={{ paddingTop: '72px', minHeight: '100vh' }}>

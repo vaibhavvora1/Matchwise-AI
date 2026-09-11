@@ -5,9 +5,11 @@ import { useAuth } from '../hooks/userAuth'
 import { getUserHistory, getHistoryItem, deleteHistoryItem } from '../services/history.api'
 import { useToast } from '../../../components/ui/Toast.jsx'
 import Navbar from '../../../components/layout/Navbar'
+import Footer from '../../../components/layout/Footer'
 import { handleDownloadPDF } from '../../ai/utils/resumePdf'
 import { handleDownloadInterviewReportPDF } from '../../ai/utils/interviewReportPdf'
 import { normalizeAtsData } from '../../ai/utils/normalizeAtsData'
+import SEO from '../../../components/ui/SEO'
 
 /* ─── Helpers ─── */
 const fmt = (date) =>
@@ -409,6 +411,11 @@ const ProfilePage = () => {
 
   return (
     <>
+      <SEO
+        title="MatchWise AI — Profile & History Dashboard"
+        description="View your saved ATS resume analyses, interview prep reports, and account settings."
+        noindex={true}
+      />
       <Navbar />
       <main style={{
         paddingTop: '80px',
@@ -907,6 +914,7 @@ const ProfilePage = () => {
           .profile-stats-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
+      <Footer />
     </>
   )
 }

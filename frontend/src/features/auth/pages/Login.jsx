@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 import InputField from '../components/InputField'
 import LoadingSpinner from '../../../components/ui/LoadingSpinner'
 import { useAuth } from '../hooks/userAuth'
+import SEO from '../../../components/ui/SEO'
+import { getErrorMessage } from '../../../services/apiError'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -27,7 +29,7 @@ const LoginPage = () => {
       await handleLogin({ email: formData.email, password: formData.password })
       navigate('/analyze')
     } catch (error) {
-      setServerError(error?.response?.data?.message || 'Unable to login. Please try again.')
+      setServerError(getErrorMessage(error, 'Unable to login. Please try again.'))
     } finally {
       setLoading(false)
     }
@@ -35,6 +37,12 @@ const LoginPage = () => {
 
   return (
     <>
+      <SEO
+        title="MatchWise AI — Sign In"
+        description="Sign in to your MatchWise AI account to access your saved resume analyses and interview prep dashboard."
+        canonical="https://matchwiseai.com/login"
+        noindex={false}
+      />
       {/* Header */}
       <div style={{ marginBottom: '32px' }}>
         <p className="section-label" style={{ marginBottom: '12px' }}>Welcome back</p>

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import usermodel from "../models/user.model.js";
 import BlacklistedAccessToken from "../models/blacklistedAccessToken.model.js";
 import RefreshToken from "../models/refreshToken.model.js";
+import logActivity from "../services/activity.service.js";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -21,12 +22,12 @@ import {
  * @returns {import("express").CookieOptions} Express cookie options
  */
 const getCookieOptions = (maxAge) => {
-  const isProduction = process.env.NODE_ENV === "production";
+  const useSecureCookies = process.env.COOKIE_SECURE === "true";
 
   return {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    secure: useSecureCookies,
+    sameSite: useSecureCookies ? "none" : "lax",
     maxAge,
     path: "/",
   };
@@ -131,6 +132,15 @@ export async function registerUsercontroller(req, res) {
       getCookieOptions(refreshTokenTtlSeconds * 1000),
     );
 
+    // Asynchronously log user registration
+    logActivity({
+      userId: newUser._id,
+      eventType: "USER_REGISTERED",
+      description: `User "${newUser.username}" registered successfully`,
+      metadata: { username: newUser.username, email: newUser.email },
+      req,
+    });
+
     res.status(201).json({
       success: true,
       message: "User registered successfully.",
@@ -216,6 +226,28 @@ export async function loginUsercontroller(req, res) {
       tokenHash: hashedRefreshToken,
       isUsed: false,
       expiresAt: new Date(Date.now() + refreshTokenTtlSeconds * 1000),
+    });
+
+    // Update user login timestamp & count in background
+    usermodel
+      .findByIdAndUpdate(user._id, {
+        $set: { lastLoginAt: new Date() },
+        $inc: { loginCount: 1 },
+      })
+      .catch((err) =>
+        console.warn(
+          "[Auth Controller] Login stats update failed:",
+          err.message,
+        ),
+      );
+
+    // Asynchronously log user login event
+    logActivity({
+      userId: user._id,
+      eventType: "USER_LOGIN",
+      description: `User "${user.username}" logged in`,
+      metadata: { username: user.username, email: user.email },
+      req,
     });
 
     res.cookie(
@@ -449,6 +481,25 @@ export async function logoutUsercontroller(req, res) {
 
     clearAuthCookies(res);
 
+    const loggedOutUserId = rawRefreshToken
+      ? (() => {
+          try {
+            return jwt.decode(rawRefreshToken)?.id;
+          } catch {
+            return null;
+          }
+        })()
+      : null;
+
+    if (loggedOutUserId) {
+      logActivity({
+        userId: loggedOutUserId,
+        eventType: "USER_LOGOUT",
+        description: "User logged out of session",
+        req,
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: "Logged out successfully",
@@ -498,6 +549,13 @@ export async function logoutAllDevicescontroller(req, res) {
     }
 
     clearAuthCookies(res);
+
+    logActivity({
+      userId,
+      eventType: "USER_LOGOUT_ALL",
+      description: "User logged out of all active sessions across devices",
+      req,
+    });
 
     res.status(200).json({
       success: true,

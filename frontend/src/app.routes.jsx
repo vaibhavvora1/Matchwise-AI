@@ -19,6 +19,11 @@ const MatchedJobs = lazy(() => import('./features/ai/pages/MatchedJobs'))
 
 // ─── Static/info pages (lazy loaded, in components/ui) ───
 const AboutUs = lazy(() => import(('./components/layout/Aboutus')))
+const FAQ = lazy(() => import('./features/ai/pages/FAQ'))
+const Contact = lazy(() => import('./features/ai/pages/Contact'))
+const PrivacyPolicy = lazy(() => import('./features/ai/pages/PrivacyPolicy'))
+const Terms = lazy(() => import('./features/ai/pages/Terms'))
+const CookiePolicy = lazy(() => import('./features/ai/pages/CookiePolicy'))
 // ─── Loading fallback ───
 const PageLoader = () => (
   <div style={{
@@ -120,6 +125,46 @@ export const Router = createBrowserRouter([
     element: (
       <Suspense fallback={<PageLoader />}>
         <AboutUs />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/faq',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <FAQ />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/contact',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <Contact />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/privacy',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <PrivacyPolicy />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/terms',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <Terms />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/cookie-policy',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <CookiePolicy />
       </Suspense>
     ),
   },

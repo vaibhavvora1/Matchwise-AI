@@ -1,5 +1,6 @@
 import { verifyAccessToken } from "../utils/token.utils.js";
 import BlacklistedAccessToken from "../models/blacklistedAccessToken.model.js";
+import usermodel from "../models/user.model.js";
 
 const sendAuthError = (res, statusCode, message, code) => {
   return res.status(statusCode).json({ success: false, message, code });
@@ -81,6 +82,55 @@ const authMiddleware = async (req, res, next) => {
       "Internal server error during authentication",
       "AUTHENTICATION_FAILED",
     );
+  }
+};
+
+export const optionalAuthMiddleware = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+
+    // No auth header — proceed anonymously, no error
+    if (!authHeader) {
+      return next();
+    }
+
+    // Malformed header format — proceed anonymously rather than blocking
+    // This is "optional" auth: a bad/expired/missing token should never block the request
+    if (!authHeader.startsWith("Bearer ")) {
+      return next();
+    }
+
+    const token = authHeader.slice("Bearer ".length).trim();
+    if (!token) {
+      return next();
+    }
+
+    try {
+      const decoded = verifyAccessToken(token);
+
+      // Only reject if token is actively blacklisted (explicit revocation, e.g. logout)
+      if (decoded?.jti) {
+        const blacklisted = await BlacklistedAccessToken.findOne({
+          jti: decoded.jti,
+        }).lean();
+        if (blacklisted) {
+          // Revoked token — proceed anonymously rather than erroring (optional auth)
+          return next();
+        }
+      }
+
+      req.user = decoded;
+    } catch {
+      // Token is expired, invalid, or tampered — proceed anonymously
+      // The frontend interceptor will refresh the token and retry if needed,
+      // but we never block this optional-auth endpoint on a token failure
+    }
+
+    return next();
+  } catch (error) {
+    // Unexpected server error — still proceed rather than blocking the request
+    console.error("[Auth Middleware] Unexpected error in optionalAuth:", error.message);
+    return next();
   }
 };
 
